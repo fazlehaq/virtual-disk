@@ -14,3 +14,12 @@ int writeByteByByte(unsigned char *in,ull number,int byteCount){
 }
 
 
+unsigned long long byteToULL(unsigned char* byteArr, int byteCount){
+    ull res = 0;
+    for(int i=0;i<byteCount;i++){
+        ull temp = byteArr[i];
+        temp = temp << (8*(byteCount - 1 - i));
+        res = res | temp;
+    }
+    return res;
+} 

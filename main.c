@@ -1,10 +1,13 @@
 #include<stdio.h>
 #include"disk_utils.h"
+#include"types.h"
+#include"shareables.h"
 
+metadata disk_state;
 
 int main(){
-	createvd();	
+	// printf("%lld",disk_state.diskSize);
+	createvd();
+	printDiskState();
 	return 0;
 }
-
-// - _

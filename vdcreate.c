@@ -4,6 +4,7 @@
 #include"encode_utils.h"
 #include"constants.h"
 #include"types.h"
+#include"disk_utils.h"
 
 FILE * createvd() {
     const char * vdisk_name = "vdisk.bin";
@@ -11,6 +12,7 @@ FILE * createvd() {
 
     // check if virtual disk already exists
     if (vdfp){
+        setDiskState(vdfp);
         return vdfp;
     }
 
@@ -39,12 +41,14 @@ FILE * createvd() {
     
     if(vd_size <= MAX_BUFFER_SIZE){
         fwrite(buffer,vd_size,1,vdfp);
+        setDiskState(vdfp);
+
         return vdfp;
     }
 
     fwrite(buffer,MAX_BUFFER_SIZE,1,vdfp);
     ull remaining_bytes = vd_size - MAX_BUFFER_SIZE;
     fwrite(buffer,1,remaining_bytes,vdfp);
-    
+    setDiskState(vdfp);
     return vdfp;
 }   
