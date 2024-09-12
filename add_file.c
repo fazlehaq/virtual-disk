@@ -1,17 +1,10 @@
 #include<stdio.h>
 #include"types.h"
-#include<sys/stat.h>
+#include"shareables.h"
 #define MAX_FILE_NAME_LENGTH 25
 
 
-ull getFileSize(char *name){
-    struct stat fileStat;
-    if (stat(name,&fileStat) == 0){
-            return (long long)fileStat.st_size;
-    }
-    perror("stat");
-    return 0;
-}
+
 
 ull getNextFreeBlock(FILE *vdfp){
 
