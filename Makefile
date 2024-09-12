@@ -2,7 +2,7 @@
 CC = gcc           # Compiler
 CFLAGS = -Wall     # Compiler flags, e.g., -Wall enables all compiler warnings
 TARGET = main      # The name of the output executable
-SRCS = main.c constants.c  vdcreate.c# List of all source files
+SRCS = main.c vdcreate.c encode_utils.c# List of all source files
 OBJS = $(SRCS:.c=.o)  # Convert .c files to .o files
  
  # Default target
