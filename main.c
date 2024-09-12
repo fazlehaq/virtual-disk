@@ -6,7 +6,6 @@
 metadata disk_state;
 
 int main(){
-	// printf("%lld",disk_state.diskSize);
 	createvd();
 	printDiskState();
 	return 0;
