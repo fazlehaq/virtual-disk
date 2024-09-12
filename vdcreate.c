@@ -37,7 +37,7 @@ FILE * createvd() {
     int pos1 = writeByteByByte(buffer,(ull) vd_size , sizeof(ull));
     int pos2 = writeByteByByte(buffer+pos1,(ull) vd_size,sizeof(ull));
     int pos3 = writeByteByByte(buffer+pos1+pos2, (ull) pos1+pos2+8,sizeof(ull));
-    int pos4 = writeByteByByte(buffer+pos1+pos2+pos3, (ull) 0,sizeof(ull));
+    writeByteByByte(buffer+pos1+pos2+pos3, (ull) 0,sizeof(ull));
     
     if(vd_size <= MAX_BUFFER_SIZE){
         fwrite(buffer,vd_size,1,vdfp);
@@ -48,7 +48,19 @@ FILE * createvd() {
 
     fwrite(buffer,MAX_BUFFER_SIZE,1,vdfp);
     ull remaining_bytes = vd_size - MAX_BUFFER_SIZE;
-    fwrite(buffer,1,remaining_bytes,vdfp);
+    memset(buffer,0,MAX_BUFFER_SIZE);
+    
+    while(remaining_bytes !=0){
+        if (remaining_bytes > MAX_BUFFER_SIZE){
+            fwrite(buffer,1,MAX_BUFFER_SIZE,vdfp);
+            remaining_bytes = remaining_bytes - MAX_BUFFER_SIZE;         
+        }
+        else{
+            fwrite(buffer,1,remaining_bytes,vdfp);
+            remaining_bytes =0;
+        }
+    }
+
     setDiskState(vdfp);
     return vdfp;
 }   
