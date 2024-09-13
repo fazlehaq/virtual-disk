@@ -28,8 +28,8 @@ FILE * createvd() {
     vdfp = fopen(vdisk_name,"rb+");  
 
     // set data 
-    const char buffer[MAX_BUFFER_SIZE];
-    memset(buffer,0,MAX_BUFFER_SIZE);
+    unsigned char buffer[MAX_BUFFER_SIZE];
+    memset((void *)buffer,0,MAX_BUFFER_SIZE);
 
     // put metadata in buffer
     // Size -> 8 || fp -> 8 || fpp -> 8 || count -> 8 ||  fpointers       ||  ---------------- || files        ||
@@ -39,13 +39,14 @@ FILE * createvd() {
     int pos3 = writeByteByByte(buffer+pos1+pos2, (ull) pos1+pos2+8,sizeof(ull));
     writeByteByByte(buffer+pos1+pos2+pos3, (ull) 0,sizeof(ull));
     
+    // writing to the vdisk if vdisk < MAX_BUFFER_SIZE
     if(vd_size <= MAX_BUFFER_SIZE){
         fwrite(buffer,vd_size,1,vdfp);
         setDiskState(vdfp);
-
         return vdfp;
     }
 
+    // Handling data writing to the vdisk if vdisk > MAX_BUFFER_SIZE
     fwrite(buffer,MAX_BUFFER_SIZE,1,vdfp);
     ull remaining_bytes = vd_size - MAX_BUFFER_SIZE;
     memset(buffer,0,MAX_BUFFER_SIZE);
@@ -61,6 +62,7 @@ FILE * createvd() {
         }
     }
 
+    // Setting disk state in global shared variable
     setDiskState(vdfp);
     return vdfp;
 }   
