@@ -131,21 +131,21 @@ void addFile(FILE *vdfp){
     // buffer is input
     printf("\n*******************File added*******************\n");
     char retrived_filename[MAX_FILE_NAME_LENGTH];
-    ull FP = NULL;
-    ull fsize = NULL;
+    ull FP;
+    ull fsize;
 
     int fileNameLength = decode(buffer,0);
     for(int i=0;i<fileNameLength;i++){
-        setbit(retrived_filename,i,getbit(buffer,i+getNumOfBitsToEncode(fileNameLength)));
+        setbit((unsigned char *)retrived_filename,i,getbit(buffer,i+getNumOfBitsToEncode(fileNameLength)));
     }
     for(int i=0;i<(fileNameLength/8);i++)
         printf("%c",retrived_filename[i]);
     
     fsize = decode(buffer,fileNameLength+getNumOfBitsToEncode(fileNameLength));
-    printf("\nSize of the file is %d  \n",fsize);
+    printf("\nSize of the file is %llu  \n",fsize);
 
     FP = decode(buffer,fileNameLength+getNumOfBitsToEncode(fileNameLength)+getNumOfBitsToEncode(fsize));
-    printf("File starts at location %d \n",FP);
+    printf("File starts at location %llu \n",FP);
 
     int isLogging = 0;
     printf("Do you want to log the file ? : ");
