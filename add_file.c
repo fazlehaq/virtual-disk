@@ -8,7 +8,6 @@
 #include"encode_utils.h"
 #include"math_utils.h"
 
-#define MAX_FILE_NAME_LENGTH 25
 
 /// @brief Add file to the vd
 /// @param vdfp File pointer of the vd
@@ -18,6 +17,11 @@ void addFile(FILE *vdfp){
     char fileName[MAX_FILE_NAME_LENGTH];
     printf("Enter the name of the file :  ");
     scanf("%s",fileName);
+
+    if(strlen(fileName) > MAX_FILE_NAME_LENGTH) {
+        printf("Max character allowed for filename is %d \n",MAX_FILE_NAME_LENGTH);
+        return;
+    }
 
     // Opening file
     FILE *fp = fopen(fileName,"rb");
@@ -117,6 +121,8 @@ void addFile(FILE *vdfp){
     }
 
     // Moving vd filepointer to the free block and copying the file
+    fseek(vdfp,disk_state.fpp,SEEK_SET);
+    fwrite(buffer,myCeilDiv(pos+pos2+fileNameLen+pos3,8),1,vdfp);
     fseek(vdfp,loc,SEEK_SET);
     copyfile(fp,vdfp);    
     // updating the disk state
@@ -126,34 +132,41 @@ void addFile(FILE *vdfp){
     updateDisksMetaData(vdfp);
 
 
+    printf("File pointer pointer sequnece is as follow : ");
+    for(int i=0;i<pos+pos2+fileNameLen+pos3;i++)
+        printf("%d",getbit(buffer,i));
+
+    printf("\n");
 
     // Test code to check if NLP is encoded properly
     // buffer is input
+    // fseek(vdfp,32,SEEK_SET);
+    // fread(buffer,MAX_BUFFER_SIZE,1,vdfp);
     printf("\n*******************File added*******************\n");
-    char retrived_filename[MAX_FILE_NAME_LENGTH];
-    ull FP;
-    ull fsize;
-
-    int fileNameLength = decode(buffer,0);
-    for(int i=0;i<fileNameLength;i++){
-        setbit((unsigned char *)retrived_filename,i,getbit(buffer,i+getNumOfBitsToEncode(fileNameLength)));
-    }
-    for(int i=0;i<(fileNameLength/8);i++)
-        printf("%c",retrived_filename[i]);
-    
-    fsize = decode(buffer,fileNameLength+getNumOfBitsToEncode(fileNameLength));
-    printf("\nSize of the file is %llu  \n",fsize);
-
-    FP = decode(buffer,fileNameLength+getNumOfBitsToEncode(fileNameLength)+getNumOfBitsToEncode(fsize));
-    printf("File starts at location %llu \n",FP);
-
-    int isLogging = 0;
-    printf("Do you want to log the file ? : ");
-    scanf("%d",&isLogging);
-
-    if(isLogging) logInFile(vdfp,fsize,FP,NULL);
-    
-    printf("\n*******************File added*******************\n");
+    // char retrived_filename[MAX_FILE_NAME_LENGTH];
+    // ull FP;
+    // ull fsize;
+// 
+    // int fileNameLength = decode(buffer,0);
+    // for(int i=0;i<fileNameLength;i++){
+        // setbit((unsigned char *)retrived_filename,i,getbit(buffer,i+getNumOfBitsToEncode(fileNameLength)));
+    // }
+    // for(int i=0;i<(fileNameLength/8);i++)
+        // printf("%c",retrived_filename[i]);
+    // 
+    // fsize = decode(buffer,fileNameLength+getNumOfBitsToEncode(fileNameLength));
+    // printf("\nSize of the file is %llu  \n",fsize);
+// 
+    // FP = decode(buffer,fileNameLength+getNumOfBitsToEncode(fileNameLength)+getNumOfBitsToEncode(fsize));
+    // printf("File starts at location %llu \n",FP);
+// 
+    // int isLogging = 0;
+    // printf("Do you want to log the file ? : ");
+    // scanf("%d",&isLogging);
+// 
+    // if(isLogging) logInFile(vdfp,fsize,FP,NULL);
+    // 
+    // printf("\n*******************File added*******************\n");
 
 }
 

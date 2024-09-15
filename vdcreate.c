@@ -43,7 +43,7 @@ FILE * createvd() {
     
     int pos1 = writeByteByByte(buffer,(ull) vd_size , sizeof(ull));
     int pos2 = writeByteByByte(buffer+pos1,(ull) vd_size,sizeof(ull));
-    int pos3 = writeByteByByte(buffer+pos1+pos2, (ull) pos1+pos2+8,sizeof(ull));
+    int pos3 = writeByteByByte(buffer+pos1+pos2, (ull) pos1+pos2+8+8,sizeof(ull));
     writeByteByByte(buffer+pos1+pos2+pos3, (ull) 0,sizeof(ull));
     
     // writing to the vdisk if vdisk < MAX_BUFFER_SIZE

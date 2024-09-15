@@ -53,7 +53,7 @@ int encode(unsigned char* in, unsigned char* out,unsigned char n , unsigned char
         return pos;
 }
 
-ull decode(unsigned char* in,short int bitoffset) {
+ull decode(unsigned char* in,ull bitoffset) {
 
           ull number = 0;
           ull jump = 2;
