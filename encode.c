@@ -1,9 +1,11 @@
 #include<stdio.h>
+#include<math.h>
 #include"math_utils.h"
 #include"encode_utils.h"
 #include"types.h"
 
-int encode(unsigned char* in, unsigned char* out,unsigned char n , unsigned char level, short int bitoffset){
+// encode returns the number of bits used to encode the given sequence
+int encode(unsigned char* in, unsigned char* out,unsigned char n , unsigned char level, unsigned int bitoffset){
         int pos;
 	
 	if(n==0){
@@ -74,3 +76,20 @@ ull decode(unsigned char* in,short int bitoffset) {
           return number;
 }
   
+int bitsToEncode(unsigned char n){
+
+        if (n <= 3) {
+                return 2; // For 3 or less, we need 2 bits
+        } else {
+        // Calculate the number of bits required to represent `n`
+        int bits = (int)ceil(log2(n + 1));
+        // Recursively call for the number of bits, then add 0 at the end of encoding
+        return bits + bitsToEncode(bits);
+        }
+}
+int getNumOfBitsToEncode(unsigned char n)  {
+        return bitsToEncode(n) + 1;
+}
+
+
+

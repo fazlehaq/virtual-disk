@@ -3,8 +3,11 @@
 #include"disk_utils.h"
 #include"encode_utils.h"
 #include"constants.h"
+#include"shareables.h"
 #include"types.h"
 #include"disk_utils.h"
+
+#define METADATA_SIZE 32
 
 FILE * createvd() {
     const char * vdisk_name = "vdisk.bin";
@@ -18,9 +21,13 @@ FILE * createvd() {
 
     // Creating file if it doesnot eixtst
     ull vd_size;
-    printf("Enter the size of vdisk in bytes \n");
-    scanf("%lld",&vd_size);
-    printf("%lld \n",vd_size);
+    while(1){
+        printf("Enter the size of vdisk in bytes \n");
+        scanf("%lld",&vd_size);
+
+        if(vd_size <= METADATA_SIZE) printf("Cannot create this small disk! \n");
+        else break;
+    }
 
     // creating new disk
     vdfp = fopen(vdisk_name,"wb");

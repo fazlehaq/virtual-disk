@@ -83,7 +83,6 @@ unsigned char* convShiftUnIntToByteArr(ull Integer, unsigned char *length,unsign
                 Integer = Integer << 1;
                 count -=1;
         }
-        printf("%d ",count);
 		*length = count;
     
 	// returning the pointer to the byte array

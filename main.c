@@ -5,11 +5,18 @@
 
 // Sharing the disk_state across multiple file 
 metadata disk_state;
+int isDebugging  = 0;
+
 
 int main(){
+	printf("Are you debugging ? : ");
+	scanf("%d",&isDebugging);
 	FILE *vdfp = createvd(); // Creating vdisk
 	printDiskState(); // Printing the vdisk state
-	addFile(vdfp); 
-	addFile(vdfp);
+	while(1){
+		addFile(vdfp); 
+		printDiskState();
+	}
+
 	return 0;
 }
