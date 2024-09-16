@@ -16,8 +16,8 @@ int main(){
 	FILE *vdfp = createvd(); // Creating vdisk
 	printDiskState(); // Printing the vdisk state
 
-	// addFile(vdfp);
-	// addFile(vdfp);
+	 addFile(vdfp);
+	 addFile(vdfp);
 	ls(vdfp);
 
 	// while(1){
