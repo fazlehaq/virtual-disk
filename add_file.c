@@ -96,7 +96,8 @@ void addFile(FILE *vdfp){
 
     // move the file pointer to store the actual data
     fseek(vdfp,loc,SEEK_SET);
-    copyfile(fp,vdfp);
+    copyfile(fp,vdfp,NULL);
+    fclose(fp);
     disk_state.fp = loc;
     disk_state.fileCount++;
 

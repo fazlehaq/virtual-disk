@@ -6,6 +6,7 @@
 FILE * createvd();
 void addFile(FILE *vdfp);
 void ls(FILE *vdfp);
+void getFile(FILE *fp);
 
 void setDiskState(FILE *);
 void printDiskState();
