@@ -39,7 +39,7 @@ unsigned long long byteToULL(unsigned char* byteArr, int byteCount){
 /// @param in Byte array
 /// @param n Specific bit number
 /// @return 0 or 1 
-int getbit(unsigned char *in,unsigned int n){
+int getbit(unsigned char *in,ull n){
 	unsigned char mask[] ={128,64,32,16,8,4,2,1};
 	return (in[(n/8)] & mask[n%8]) == 0 ? 0 : 1;
 }
@@ -48,7 +48,7 @@ int getbit(unsigned char *in,unsigned int n){
 /// @param out Byte array
 /// @param n Bit number
 /// @param k Bit value [0 | 1]
-void setbit(unsigned char *out,unsigned int n, int k){
+void setbit(unsigned char *out,ull n, int k){
 	unsigned char mask[] ={128,64,32,16,8,4,2,1};
 	if(k == 0) 
 		out[(n/8)] = (out[(n/8)] & (~mask[(n%8)]));

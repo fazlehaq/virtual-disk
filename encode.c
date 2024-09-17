@@ -66,6 +66,7 @@ ull decode(unsigned char* in,ull bitoffset) {
                   elts += jump;
                   number = 0;
                   for(int k=0 ; k<jump; k++) {
+                        // printf("getting %llu bit \n",i+bitoffset);
                           number += power * getbit(in,i+bitoffset);
                           i++;
                           power /= 2;
@@ -76,20 +77,17 @@ ull decode(unsigned char* in,ull bitoffset) {
           return number;
 }
   
-int bitsToEncode(unsigned char n){
+ull bitsToEncode(ull n){
 
         if (n <= 3) {
                 return 2; // For 3 or less, we need 2 bits
         } else {
         // Calculate the number of bits required to represent `n`
-        int bits = (int)ceil(log2(n + 1));
+        ull bits = (ull)(ceil(log2(n + 1)));
         // Recursively call for the number of bits, then add 0 at the end of encoding
         return bits + bitsToEncode(bits);
         }
 }
-int getNumOfBitsToEncode(unsigned char n)  {
+ull getNumOfBitsToEncode(ull n)  {
         return bitsToEncode(n) + 1;
 }
-
-
-

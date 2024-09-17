@@ -17,6 +17,7 @@ void addFile(FILE *vdfp){
     char fileName[MAX_FILE_NAME_LENGTH];
     printf("Enter the name of the file :  ");
     scanf("%s",fileName);
+    printf("%s\n",fileName);
 
     if(strlen(fileName) > MAX_FILE_NAME_LENGTH) {
         printf("Max character allowed for filename is %d \n",MAX_FILE_NAME_LENGTH);
@@ -44,129 +45,87 @@ void addFile(FILE *vdfp){
         return;
     }
 
-    //! This copying thing should be done after the encoding of NLP is done,
-    //! coz it may happen there is enough space for one but not for other
-    // Moving vd filepointer to the free block and copying the file
-    // fseek(vdfp,loc,SEEK_SET);
-    // copyfile(fp,vdfp);    
-    // disk_state.fp = loc;
-    // disk_state.fileCount++;
+    // Now well encode the N,L,P pointer and check if we have space for this in vd 
+    // if yes we store the pointer and actual file both.
 
-    // Encoding the (N,L,P) Name Length Pointer
-    unsigned char buffer[MAX_BUFFER_SIZE]; // Buffer to store the encoding of the NLP pointer
-    ull fileNameLen = strlen(fileName) * 8; // in bits
-
-    // temprory buffer
-    // Max possible size of the file can be respresented in 8 bytes 
-    // MAX_ALLOWED length of filename is 25 hence 200 bits is max length which requires a byte  
-    unsigned char buffer2[8]; 
-    unsigned char fileNameLenLen;
-    convShiftUnIntToByteArr(fileNameLen, &fileNameLenLen, buffer2);
-    // printf(" %d ",fileNameLenLen);
-
-    // Encoding filename length
-    int pos = encode(buffer2, buffer, fileNameLenLen, 0, 0);
-    if(isDebugging){   
-        printf("\nPrinting encoding  %d bits ... \n",pos);
-        for (size_t i = 0; i < pos; i++){
-            printf("%d",getbit(buffer, i));
-        }
-        printf("\n");
-    }
-
-    // putting actual filename
-    for(int i=pos;i<pos+(fileNameLen);i++){
-        setbit(buffer,i,getbit((unsigned char *)fileName,i-pos));
-    }
-
-
-    // Encoding the length 
-    unsigned char bitCntFileSize;
-    convShiftUnIntToByteArr(fileSize,&bitCntFileSize,buffer2);
-    if(isDebugging) printf("Bits required to store the fileSize is %d \n",bitCntFileSize);
+    unsigned char encoding[MAX_BUFFER_SIZE] = {0};
+    ull fileNameLength = strlen(fileName);
+    int bitOffset = 0;
+    int boff = 0;
     
-    int pos2 = encode(buffer2,buffer,bitCntFileSize,0,pos+fileNameLen);
-    if(isDebugging){
-        printf("Encoding of the fileSize %llu is  : ",fileSize);
-        for(int i=pos+fileNameLen;i<pos+pos2+fileNameLen; i++ )
-            printf("%d",getbit(buffer,i));
-        printf("\n");
-    }
+    unsigned char temp_buffer[8] = {0}; // to store byteArr representation 
+    unsigned char bitsCnt;
+    convShiftUnIntToByteArr(fileNameLength,&bitsCnt,temp_buffer);
+    int pos1 = encode(temp_buffer,encoding,bitsCnt,0,bitOffset);
+    bitOffset += pos1;
+    boff += getNumOfBitsToEncode(fileNameLength);
+    // printf("\n pos -> %llu  encoded -> %llu",pos1,getNumOfBitsToEncode(fileNameLength));
 
-
-    // Encode the pointer
-    unsigned char bitCntFilePointer;
-    convShiftUnIntToByteArr(loc,&bitCntFilePointer,buffer2);
-    if(isDebugging) printf("Bits required to store the filepointer are : %d \n",bitCntFilePointer);
-
-    int pos3 = encode(buffer2,buffer,bitCntFilePointer,0,pos+fileNameLen+pos2);
+    for(int i=0;i<8*fileNameLength;i++)
+        setbit(encoding,(ull)(i+bitOffset),getbit((unsigned char *)fileName,(ull)i));
     
-    if(isDebugging){
-        printf("Encoding of the filepointer %llu is  : ",loc);
-        for(int i=pos+pos2+fileNameLen;i<pos+pos2+fileNameLen+pos3;i++)
-            printf("%d",getbit(buffer,i));
-    }
+    bitOffset += (fileNameLength*8);
+    boff += (fileNameLength*8);
+    // printf("\n pos -> %llu  encoded -> %llu",fileNameLength*8,fileNameLength*8);
 
 
-    // At this point encoding is done and we also have free block to store 
-    // the actual file 
-    // But before storing them we need to make sure the file and its pointer 
-    // dont overlap 
 
-    ull newFPP = disk_state.fpp + myCeilDiv(pos+pos2+fileNameLen+pos3 , 8);
-    
-    if(loc < newFPP) {
-        printf("No space to add file and its metadata");
+    // encoding the fileSize
+    bitsCnt = 0;
+    convShiftUnIntToByteArr(fileSize,&bitsCnt,temp_buffer);
+    int pos2 = encode(temp_buffer,encoding,bitsCnt,0,bitOffset);
+    bitOffset += pos2;
+
+    //encoding the filePointer
+    bitsCnt = 0;
+    convShiftUnIntToByteArr(loc,&bitsCnt,temp_buffer);
+    int pos3= encode(temp_buffer,encoding,bitsCnt,0,bitOffset);
+    bitOffset += pos3;
+
+    // Now the encoding is done we'll check if there is space for it in vd
+    ull newFpp = disk_state.fpp + myCeilDiv(bitOffset,8);
+    if(loc < newFpp){
+        printf("Not enough storage for metadata\n");
         return;
     }
 
-    // Moving vd filepointer to the free block and copying the file
+    // move the file pointer to store the fpp
     fseek(vdfp,disk_state.fpp,SEEK_SET);
-    fwrite(buffer,myCeilDiv(pos+pos2+fileNameLen+pos3,8),1,vdfp);
+    fwrite(encoding,1,myCeilDiv(bitOffset,8),vdfp);
+    disk_state.fpp = newFpp;
+
+    // move the file pointer to store the actual data
     fseek(vdfp,loc,SEEK_SET);
-    copyfile(fp,vdfp);    
-    // updating the disk state
+    copyfile(fp,vdfp);
     disk_state.fp = loc;
     disk_state.fileCount++;
-    disk_state.fpp = newFPP;
+
     updateDisksMetaData(vdfp);
+    
+    printf("********File Added********\n");
+    //  cheking the encoding
+    int filenamelen = decode(encoding,0);
+    char filename[25] = {0};
+    int bits = getNumOfBitsToEncode(filenamelen);
+    for(int i=0;i<filenamelen*8;i++)
+        setbit((unsigned char *)filename,i,getbit(encoding,i+bits));
+    for(int i=0;i<filenamelen;i++)
+        printf("%c",filename[i]);
+    bits += 8*filenamelen;
+    ull fsize = decode(encoding,bits);
+        printf("\t%llu",fsize);
+        bits+=getNumOfBitsToEncode(fsize);
+    ull fpp = decode(encoding,bits);
+        printf("\t%llu",fpp);
+    // printf("\nBytes for encoding : %llu %llu",myCeilDiv(bitOffset,8),myCeilDiv(boff,8));
 
+    printf("\n********File Added********\n");
 
-    printf("File pointer pointer sequnece is as follow : ");
-    for(int i=0;i<pos+pos2+fileNameLen+pos3;i++)
-        printf("%d",getbit(buffer,i));
-
-    printf("\n");
-
-    // Test code to check if NLP is encoded properly
-    // buffer is input
-    // fseek(vdfp,32,SEEK_SET);
-    // fread(buffer,MAX_BUFFER_SIZE,1,vdfp);
-    printf("\n*******************File added*******************\n");
-    // char retrived_filename[MAX_FILE_NAME_LENGTH];
-    // ull FP;
-    // ull fsize;
-// 
-    // int fileNameLength = decode(buffer,0);
-    // for(int i=0;i<fileNameLength;i++){
-        // setbit((unsigned char *)retrived_filename,i,getbit(buffer,i+getNumOfBitsToEncode(fileNameLength)));
+    // for(int i=0;i<myCeilDiv(bitOffset,8);i++){
+    //     for(int j=0;j<8;j++){
+    //         printf("%d",getbit(encoding,((i*8)+j)));
+    //     }
+    //     printf(" ");
     // }
-    // for(int i=0;i<(fileNameLength/8);i++)
-        // printf("%c",retrived_filename[i]);
-    // 
-    // fsize = decode(buffer,fileNameLength+getNumOfBitsToEncode(fileNameLength));
-    // printf("\nSize of the file is %llu  \n",fsize);
-// 
-    // FP = decode(buffer,fileNameLength+getNumOfBitsToEncode(fileNameLength)+getNumOfBitsToEncode(fsize));
-    // printf("File starts at location %llu \n",FP);
-// 
-    // int isLogging = 0;
-    // printf("Do you want to log the file ? : ");
-    // scanf("%d",&isLogging);
-// 
-    // if(isLogging) logInFile(vdfp,fsize,FP,NULL);
-    // 
-    // printf("\n*******************File added*******************\n");
-
 }
 
