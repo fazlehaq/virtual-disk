@@ -15,7 +15,6 @@ void ls (FILE *vdfp){
         return; 
     }
 
-    ull i =1;
     unsigned char encoding[MAX_BUFFER_SIZE];
     ull byteCnt = 0;
     fseek(vdfp,32,SEEK_SET);
@@ -48,6 +47,6 @@ void ls (FILE *vdfp){
         bitCnt = myCeilDiv(bitCnt,8) *8;
         byteCnt += myCeilDiv(bitCnt,8);
         fseek(vdfp, byteCnt + 32,SEEK_SET);
-        int bytes = fread(encoding,1,MAX_BUFFER_SIZE,vdfp);
+        fread(encoding,1,MAX_BUFFER_SIZE,vdfp);
     }
 }

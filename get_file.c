@@ -12,7 +12,7 @@
 void getFile(FILE *vdfp){
     if(disk_state.fileCount == 0) { printf("No files in the vd\n"); return; }
     char fileName[MAX_FILE_NAME_LENGTH] = {0};
-    scanf("%s",&fileName);
+    scanf("%s",fileName);
 
     if(strlen(fileName) == 0) { printf("Please enter valid filename\n"); return; }
 
@@ -32,7 +32,7 @@ void getFile(FILE *vdfp){
         int currFileNameLength = decode(buffer,bitCnt);
         bitCnt += getNumOfBitsToEncode(currFileNameLength);
         for(int i=0;i<8*currFileNameLength;i++)
-            setbit(currFileName,i,getbit(buffer,i+bitCnt));
+            setbit((unsigned char *)currFileName,i,getbit(buffer,i+bitCnt));
         bitCnt += (8*currFileNameLength);
 
         fileSize = decode(buffer,bitCnt);
