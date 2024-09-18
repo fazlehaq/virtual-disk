@@ -8,13 +8,9 @@
 
 // Sharing the disk_state across multiple file 
 metadata disk_state;
-int isDebugging  = 0;
 
 #include"math_utils.h"
 int main(){
-	// printf("%llu",getFileSize("main.c"));
-	// printf("Are you debugging ? : ");
-	// scanf("%d",&isDebugging);
 	FILE *vdfp = createvd(); // Creating vdisk
 	printDiskState(); // Printing the vdisk state
 
@@ -50,3 +46,6 @@ int main(){
 
 	return 0;
 }
+
+
+// 25bytes filname + bitsToEncode(25) + (bitsToEncodeE(8bytes MAX_ULL) * 2)
