@@ -17,7 +17,7 @@ int main(){
 	while(1){
 		int choice;
 		printf("**********************************\nSelect your choice \n");
-		printf("1.Add file\n2.ls\n3.Print disk state\n4.Get file\n5.Exit\n");
+		printf("1.Add file\n2.ls\n3.Print disk state\n4.Get file\n5.Remove file\n6.Exit\n");
 		scanf("%d",&choice);
 		switch (choice){
 			case 1:
@@ -34,7 +34,11 @@ int main(){
 			case 4 :
 				getFile(vdfp);
 				break;
-			case 5 : 
+			case 5 :
+				rm(vdfp);
+				break;
+
+			case 6 : 
 				printf("Closing VD!\n");
 				exit(0);
 

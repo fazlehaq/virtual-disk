@@ -52,6 +52,9 @@ void addFile(FILE *vdfp){
     ull fileNameLength = strlen(fileName);
     int bitOffset = 0;
     
+    // 1 bit flag for representing the file removed
+    setbit(encoding,bitOffset++,0);
+
     unsigned char temp_buffer[8] = {0}; // to store byteArr representation 
     unsigned char bitsCnt;
     convShiftUnIntToByteArr(fileNameLength,&bitsCnt,temp_buffer);
