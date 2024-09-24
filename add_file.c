@@ -51,22 +51,17 @@ void addFile(FILE *vdfp){
     unsigned char encoding[MAX_BUFFER_SIZE] = {0};
     ull fileNameLength = strlen(fileName);
     int bitOffset = 0;
-    int boff = 0;
     
     unsigned char temp_buffer[8] = {0}; // to store byteArr representation 
     unsigned char bitsCnt;
     convShiftUnIntToByteArr(fileNameLength,&bitsCnt,temp_buffer);
     int pos1 = encode(temp_buffer,encoding,bitsCnt,0,bitOffset);
     bitOffset += pos1;
-    boff += getNumOfBitsToEncode(fileNameLength);
-    // printf("\n pos -> %llu  encoded -> %llu",pos1,getNumOfBitsToEncode(fileNameLength));
 
     for(int i=0;i<8*fileNameLength;i++)
         setbit(encoding,(ull)(i+bitOffset),getbit((unsigned char *)fileName,(ull)i));
     
     bitOffset += (fileNameLength*8);
-    boff += (fileNameLength*8);
-    // printf("\n pos -> %llu  encoded -> %llu",fileNameLength*8,fileNameLength*8);
 
 
 
@@ -103,30 +98,6 @@ void addFile(FILE *vdfp){
 
     updateDisksMetaData(vdfp);
     
-    printf("********File Added********\n");
-    //  cheking the encoding
-    int filenamelen = decode(encoding,0);
-    char filename[25] = {0};
-    int bits = getNumOfBitsToEncode(filenamelen);
-    for(int i=0;i<filenamelen*8;i++)
-        setbit((unsigned char *)filename,i,getbit(encoding,i+bits));
-    for(int i=0;i<filenamelen;i++)
-        printf("%c",filename[i]);
-    bits += 8*filenamelen;
-    ull fsize = decode(encoding,bits);
-        printf("\t%llu",fsize);
-        bits+=getNumOfBitsToEncode(fsize);
-    ull fpp = decode(encoding,bits);
-        printf("\t%llu",fpp);
-    // printf("\nBytes for encoding : %llu %llu",myCeilDiv(bitOffset,8),myCeilDiv(boff,8));
-
     printf("\n********File Added********\n");
-
-    // for(int i=0;i<myCeilDiv(bitOffset,8);i++){
-    //     for(int j=0;j<8;j++){
-    //         printf("%d",getbit(encoding,((i*8)+j)));
-    //     }
-    //     printf(" ");
-    // }
 }
 
