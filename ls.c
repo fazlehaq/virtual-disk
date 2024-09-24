@@ -33,6 +33,8 @@ void ls (FILE *vdfp){
         ull filePointer = 0;
         int bitReadCnt = 0; // bitsRead in current pointer
 
+        int isRemoved = getbit(encoding,bitReadCnt++);
+    
         fileNameLength = decode(encoding,encodingBitCnt);
         bitReadCnt += getNumOfBitsToEncode(fileNameLength);
         for(int i=0;i<fileNameLength*8;i++)
@@ -45,7 +47,8 @@ void ls (FILE *vdfp){
         filePointer = decode(encoding,encodingBitCnt+bitReadCnt);
         bitReadCnt += getNumOfBitsToEncode(filePointer);
 
-        printf("%s\t%llu\t%llu\n",fileName,fileSize,filePointer);
+        if(!isRemoved)
+            printf("%s\t%llu\t%llu\n",fileName,fileSize,filePointer);
         
         fileCnt--;
         currPointerCnt++;
