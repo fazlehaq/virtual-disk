@@ -24,25 +24,26 @@ void ls (FILE *vdfp){
     ull byteCnt = 0;
     fseek(vdfp,32,SEEK_SET);
     fread(encoding,MAX_BUFFER_SIZE,1,vdfp);
-    int bitCnt = 0;
+    int encodingBitCnt = 0;
 
     while(fileCnt != 0){
         int fileNameLength = 0;
         char fileName[MAX_FILE_NAME_LENGTH] = {0};
         ull fileSize = 0;
         ull filePointer = 0;
+        int bitReadCnt = 0; // bitsRead in current pointer
 
-        fileNameLength = decode(encoding,bitCnt);
-        bitCnt += getNumOfBitsToEncode(fileNameLength);
+        fileNameLength = decode(encoding,encodingBitCnt);
+        bitReadCnt += getNumOfBitsToEncode(fileNameLength);
         for(int i=0;i<fileNameLength*8;i++)
-            setbit((unsigned char *) fileName , i , getbit(encoding,i+bitCnt));
-        bitCnt += (fileNameLength *8);
+            setbit((unsigned char *) fileName , i , getbit(encoding,i+encodingBitCnt+bitReadCnt));
+        bitReadCnt += (fileNameLength *8);
 
-        fileSize = decode(encoding,bitCnt);
-        bitCnt += getNumOfBitsToEncode(fileSize);
+        fileSize = decode(encoding,encodingBitCnt+bitReadCnt);
+        bitReadCnt += getNumOfBitsToEncode(fileSize);
 
-        filePointer = decode(encoding,bitCnt);
-        bitCnt += getNumOfBitsToEncode(filePointer);
+        filePointer = decode(encoding,encodingBitCnt+bitReadCnt);
+        bitReadCnt += getNumOfBitsToEncode(filePointer);
 
         printf("%s\t%llu\t%llu\n",fileName,fileSize,filePointer);
         
@@ -50,12 +51,14 @@ void ls (FILE *vdfp){
         currPointerCnt++;
 
         if(fileCnt == 0) break;
-        bitCnt = myCeilDiv(bitCnt,8) *8;
-        byteCnt += myCeilDiv(bitCnt,8);
-        if(currPointerCnt == maxPointersInBuffer){
+        encodingBitCnt += myCeilDiv(bitReadCnt,8) *8;
+        byteCnt += myCeilDiv(bitReadCnt,8);
+        if(currPointerCnt == 5){
             fseek(vdfp, byteCnt + 32,SEEK_SET);
+            printf("%ld\n" ,ftell(vdfp));
             fread(encoding,1,MAX_BUFFER_SIZE,vdfp);
             currPointerCnt = 0;
+            encodingBitCnt = 0;
         }
     }
 }
