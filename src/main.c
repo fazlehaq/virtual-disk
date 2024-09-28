@@ -1,15 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include"disk_utils.h"
-#include"types.h"
-#include"shareables.h"
-#include"file_utils.h"
-#include"encode_utils.h"
+#include"headers/disk_utils.h"
+#include"headers/types.h"
+#include"headers/shareables.h"
+#include"headers/file_utils.h"
+#include"headers/encode_utils.h"
+#include"headers/math_utils.h"
 
 // Sharing the disk_state across multiple file 
 metadata disk_state;
 
-#include"math_utils.h"
 int main(){
 	FILE *vdfp = createvd(); // Creating vdisk
 	printDiskState(); // Printing the vdisk state

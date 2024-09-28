@@ -1,8 +1,8 @@
 #include<stdio.h>
-#include"file_utils.h"
 #include<sys/stat.h>
-#include"types.h"
-#include"constants.h"
+#include"../headers/file_utils.h"
+#include"../headers/types.h"
+#include"../headers/constants.h"
 
 /// @brief Takes the name/path of the file and return its size
 /// @return the total size of file in the bytes

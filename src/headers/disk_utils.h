@@ -3,11 +3,11 @@
 
 
 
-FILE * createvd();
-void addFile(FILE *vdfp);
-void ls(FILE *vdfp);
-void getFile(FILE *fp);
-void rm(FILE *vdfp);
+FILE* createvd();
+void addFile(FILE* vdfp);
+void ls(FILE* vdfp);
+void getFile(FILE* fp);
+void rm(FILE* vdfp);
 
 void setDiskState(FILE *);
 void printDiskState();

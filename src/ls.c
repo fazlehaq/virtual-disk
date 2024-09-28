@@ -1,11 +1,11 @@
 #include<stdio.h>
 #include<string.h>
-#include"types.h"
-#include"shareables.h"
-#include"constants.h"
-#include"encode_utils.h"
-#include"disk_utils.h"
-#include"math_utils.h"
+#include"headers/types.h"
+#include"headers/shareables.h"
+#include"headers/constants.h"
+#include"headers/encode_utils.h"
+#include"headers/disk_utils.h"
+#include"headers/math_utils.h"
 
 // Calculating the max number of bytes to store the encoding of the pointer
 #define MAX_BYTES_PER_FILE_POINTER_ENCODING myCeilDiv ((25*8)+getNumOfBitsToEncode(25)+(2*(getNumOfBitsToEncode(0xFFFFFFFFFFFFFFFF))),8)
@@ -25,7 +25,6 @@ void ls (FILE *vdfp){
     fseek(vdfp,32,SEEK_SET);
     fread(encoding,MAX_BUFFER_SIZE,1,vdfp);
     int encodingBitCnt = 0;
-    ull filesCnt = 0;
 
 
     while(fileCnt != 0){
@@ -61,7 +60,7 @@ void ls (FILE *vdfp){
         if(fileCnt == 0) break;
         encodingBitCnt += myCeilDiv(bitReadCnt,8) *8;
         byteCnt += myCeilDiv(bitReadCnt,8);
-        if(currPointerCnt == 5){
+        if(currPointerCnt == maxPointersInBuffer){
             fseek(vdfp, byteCnt + 32,SEEK_SET);
             printf("%ld\n" ,ftell(vdfp));
             fread(encoding,1,MAX_BUFFER_SIZE,vdfp);

@@ -1,8 +1,8 @@
 #include<stdio.h>
 #include<math.h>
-#include"types.h"
-#include"encode_utils.h"
-#include"math_utils.h"
+#include"../headers/types.h"
+#include"../headers/encode_utils.h"
+#include"../headers/math_utils.h"
 
 /// @brief Given a number we put its bytes in an unsigned char array
 /// @return number of bytes stored

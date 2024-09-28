@@ -1,12 +1,12 @@
 #include<stdio.h>
 #include<string.h>
-#include"types.h"
-#include"shareables.h"
-#include"constants.h"
-#include"file_utils.h"
-#include"disk_utils.h"
-#include"encode_utils.h"
-#include"math_utils.h"
+#include"headers/types.h"
+#include"headers/shareables.h"
+#include"headers/constants.h"
+#include"headers/file_utils.h"
+#include"headers/disk_utils.h"
+#include"headers/encode_utils.h"
+#include"headers/math_utils.h"
 
 
 /// @brief Add file to the vd

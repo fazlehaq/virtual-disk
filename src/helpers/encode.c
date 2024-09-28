@@ -1,8 +1,8 @@
 #include<stdio.h>
 #include<math.h>
-#include"math_utils.h"
-#include"encode_utils.h"
-#include"types.h"
+#include"../headers/math_utils.h"
+#include"../headers/encode_utils.h"
+#include"../headers/types.h"
 
 // encode returns the number of bits used to encode the given sequence
 int encode(unsigned char* in, unsigned char* out,unsigned char n , unsigned char level, unsigned int bitoffset){

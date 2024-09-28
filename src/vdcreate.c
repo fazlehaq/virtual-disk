@@ -1,11 +1,11 @@
 #include<stdio.h>
 #include<string.h>
-#include"disk_utils.h"
-#include"encode_utils.h"
-#include"constants.h"
-#include"shareables.h"
-#include"types.h"
-#include"disk_utils.h"
+#include"headers/disk_utils.h"
+#include"headers/encode_utils.h"
+#include"headers/constants.h"
+#include"headers/shareables.h"
+#include"headers/types.h"
+#include"headers/disk_utils.h"
 
 #define METADATA_SIZE 32
 

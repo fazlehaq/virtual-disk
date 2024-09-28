@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<math.h>
-#include"math_utils.h"
-#include"types.h"
+#include"../headers/math_utils.h"
+#include"../headers/types.h"
 
 // Custom pow function uses unsigned long long for i/o
 ull myPow(ull num, ull x){

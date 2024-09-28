@@ -1,9 +1,9 @@
 #include<stdio.h>
-#include"disk_utils.h"
-#include"encode_utils.h"
-#include"shareables.h"
-#include"constants.h"
-#include"types.h"
+#include"../headers/disk_utils.h"
+#include"../headers/encode_utils.h"
+#include"../headers/shareables.h"
+#include"../headers/constants.h"
+#include"../headers/types.h"
 
 /// @brief Set the disk_state global values by extracting them from vd
 /// @param vdfp File Pointer of the vd
