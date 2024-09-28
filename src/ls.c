@@ -7,9 +7,6 @@
 #include"headers/disk_utils.h"
 #include"headers/math_utils.h"
 
-// Calculating the max number of bytes to store the encoding of the pointer
-#define MAX_BYTES_PER_FILE_POINTER_ENCODING myCeilDiv ((25*8)+getNumOfBitsToEncode(25)+(2*(getNumOfBitsToEncode(0xFFFFFFFFFFFFFFFF))),8)
-
 
 void ls (FILE *vdfp){
     ull fileCnt = disk_state.fileCount;
