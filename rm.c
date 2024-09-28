@@ -57,7 +57,6 @@ void rm(FILE *vdfp)
         {
             if (strcmp(fileName, fileNameToRemove) == 0)
             {
-                printf("File found !\n");
                 // Goto encoding to the bytenumber at (encodingBitCount/8)
                 // set the bit 0 to 1
                 setbit(encoding, encodingBitCnt, 1);
@@ -67,8 +66,8 @@ void rm(FILE *vdfp)
                 fwrite(encoding + (myCeilDiv(encodingBitCnt, 8)), 1, 1, vdfp);
                 disk_state.fileCount--;
                 updateDisksMetaData(vdfp);
+                printf("File  removed. \n");
                 return;
-                // printf("%s\t%llu\t%llu\n",fileName,fileSize,filePointer);
             }
 
             fileCnt--;
@@ -89,4 +88,6 @@ void rm(FILE *vdfp)
             encodingBitCnt = 0;
         }
     }
+
+    printf("File Not Found.\n");
 }
